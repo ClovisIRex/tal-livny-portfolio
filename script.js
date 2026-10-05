@@ -21,11 +21,6 @@
       if (value !== undefined) el.innerHTML = value;
     });
     document.querySelectorAll('[data-i18n-alt]').forEach(el => el.alt = content[language][el.dataset.i18nAlt]);
-    document.querySelectorAll('.resume-download').forEach(el => {
-      el.href = `assets/resumes/tal-livny-${el.dataset.kind}-${language}.${el.dataset.format}`;
-      const name = content[language][el.dataset.kind + 'Resume'];
-      el.setAttribute('aria-label', `${name} · ${el.dataset.format.toUpperCase()} · ${language === 'he' ? 'עברית' : 'English'}`);
-    });
     languageButton.textContent = language === 'he' ? 'EN' : 'עב';
     languageButton.setAttribute('aria-label', language === 'he' ? 'Switch to English' : 'מעבר לעברית');
     menuButton.setAttribute('aria-label', labels[language].menu);
@@ -110,3 +105,4 @@
   updateProgress();
   document.getElementById('year').textContent = new Date().getFullYear();
 })();
+
