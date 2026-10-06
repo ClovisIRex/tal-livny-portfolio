@@ -4,6 +4,7 @@
   const menuButton = document.getElementById('menu-toggle');
   const nav = document.getElementById('main-nav');
   const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const reduceMotion = () => motion.matches || root.classList.contains('reduce-motion');
   function closeMenu() { nav.classList.remove('is-open'); menuButton.setAttribute('aria-expanded', 'false'); }
   menuButton.addEventListener('click', () => {
     const open = menuButton.getAttribute('aria-expanded') !== 'true';
@@ -27,7 +28,7 @@
     if (selectedCategory && focusHeading) {
       const heading = document.getElementById(`heading-${selectedCategory}`);
       heading.focus({preventScroll:true});
-      document.getElementById('categories').scrollIntoView({behavior:motion.matches ? 'instant' : 'smooth',block:'start'});
+      document.getElementById('categories').scrollIntoView({behavior:reduceMotion() ? 'instant' : 'smooth',block:'start'});
     }
     updateProgress();
   }
@@ -81,7 +82,7 @@
   document.querySelectorAll('.tech-item').forEach(el => indexEntry(el, el.lastElementChild.textContent.trim(), el.closest('.tech-group').querySelector('h3').textContent.trim()));
   document.querySelectorAll('.capability-list span').forEach(el => indexEntry(el, el.textContent.trim(), 'Security & systems'));
   document.querySelectorAll('.education-card').forEach(el => indexEntry(el, el.querySelector('h3').textContent.trim(), `Education · ${el.querySelector('.education-institution p').textContent.trim()}`, el.textContent));
-  document.querySelectorAll('.timeline-item').forEach(el => indexEntry(el, el.querySelector('h3').textContent.trim(), `Experience · ${el.querySelector('.role').textContent.trim()}`, el.textContent));
+  document.querySelectorAll('.timeline-item').forEach(el => indexEntry(el, el.querySelector('h3,h4').textContent.trim(), `Experience · ${el.querySelector('.role').textContent.trim()}`, el.textContent));
   document.querySelectorAll('.language-grid li').forEach(el => indexEntry(el, el.querySelector('strong').textContent.trim(), `Languages · ${el.querySelector('small').textContent.trim()}`));
   const projectIdentity = document.querySelector('.project-identity');
   indexEntry(projectIdentity, projectIdentity.querySelector('strong').textContent.trim(), 'Projects', document.getElementById('panel-project').textContent);
@@ -98,9 +99,14 @@
     const below = viewBottom - field.bottom - 24;
     const above = field.top - Math.max(headerBottom, viewTop) - 24;
     const useAbove = below < 200 && above > below;
+    const available = Math.max(48, useAbove ? above : below);
+    const footer = searchDropdown.querySelector('.search-dropdown-note');
+    footer.hidden = available < 140;
+    const footerHeight = footer.hidden ? 0 : footer.getBoundingClientRect().height;
     searchDropdown.style.top = useAbove ? 'auto' : `${field.bottom - parent.top + 8}px`;
     searchDropdown.style.bottom = useAbove ? `${parent.bottom - field.top + 8}px` : 'auto';
-    searchList.style.maxHeight = `${Math.max(60, Math.min(346, (useAbove ? above : below) - 40))}px`;
+    searchDropdown.style.maxHeight = `${available}px`;
+    searchList.style.maxHeight = `${Math.max(24, Math.min(346, available - footerHeight - 2))}px`;
   }
   function hideSuggestions() {
     searchDropdown.hidden = true;
@@ -178,7 +184,7 @@
     entry.target.classList.add('search-match');
     if (!entry.target.hasAttribute('tabindex')) entry.target.setAttribute('tabindex','-1');
     entry.target.focus({preventScroll:true});
-    entry.target.scrollIntoView({behavior:motion.matches ? 'instant' : 'smooth', block:'center'});
+    entry.target.scrollIntoView({behavior:reduceMotion() ? 'instant' : 'smooth', block:'center'});
     searchAnnouncement.textContent = `Showing ${entry.label} in ${document.getElementById(`heading-${entry.key}`).textContent}.`;
   }
   searchInput.addEventListener('input',renderSuggestions);
@@ -218,10 +224,11 @@
     slides.forEach((slide, i) => {
       slide.hidden = i !== active;
       slide.classList.remove('is-changing');
-      if (i === active && !motion.matches) { void slide.offsetWidth; slide.classList.add('is-changing'); }
+      if (i === active && !reduceMotion()) { void slide.offsetWidth; slide.classList.add('is-changing'); }
     });
     dots.forEach((dot, i) => dot.setAttribute('aria-pressed', String(i === active)));
     document.getElementById('slide-number').textContent = String(active + 1).padStart(2, '0');
+    document.getElementById('carousel-status').textContent = `Screenshot ${active + 1} of ${slides.length}: ${slides[active].querySelector('h3').textContent}.`;
   }
   document.getElementById('previous-project').addEventListener('click', () => showSlide(active - 1));
   document.getElementById('next-project').addEventListener('click', () => showSlide(active + 1));
@@ -245,7 +252,7 @@
     touchStart = null;
   }, {passive:true});
   viewport.addEventListener('pointercancel', () => { touchStart = null; }, {passive:true});
-  if ('IntersectionObserver' in window && !motion.matches) {
+  if ('IntersectionObserver' in window && !reduceMotion()) {
     const observer = new IntersectionObserver(entries => entries.forEach(entry => {
       if (entry.isIntersecting) { entry.target.classList.add('is-visible'); observer.unobserve(entry.target); }
     }), {threshold:0.08});
@@ -263,6 +270,7 @@
     if (!ticking) { requestAnimationFrame(updateProgress); ticking = true; }
   }, {passive:true});
   window.addEventListener('resize', updateProgress, {passive:true});
+  window.addEventListener('accessibilitychange',() => { updateProgress(); fitSuggestions(); });
   updateProgress();
   document.getElementById('year').textContent = new Date().getFullYear();
 })();
