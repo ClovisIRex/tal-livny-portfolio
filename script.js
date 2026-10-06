@@ -16,6 +16,26 @@
   });
   document.addEventListener('click', event => { if (!event.target.closest('.site-header')) closeMenu(); });
   window.matchMedia('(min-width: 761px)').addEventListener('change', closeMenu);
+  const categoryButtons = [...document.querySelectorAll('[data-category]')];
+  const panels = [...document.querySelectorAll('.category-panel')];
+  let selectedCategory = null;
+  function selectCategory(key, focusHeading = true) {
+    selectedCategory = key === selectedCategory ? null : key;
+    categoryButtons.forEach(button => button.setAttribute('aria-expanded', String(button.dataset.category === selectedCategory)));
+    panels.forEach(panel => { panel.hidden = panel.id !== `panel-${selectedCategory}`; });
+    if (selectedCategory && focusHeading) {
+      const heading = document.getElementById(`heading-${selectedCategory}`);
+      heading.focus({preventScroll:true});
+      document.getElementById('categories').scrollIntoView({behavior:motion.matches ? 'instant' : 'smooth',block:'start'});
+    }
+    updateProgress();
+  }
+  categoryButtons.forEach(button => button.addEventListener('click', () => selectCategory(button.dataset.category)));
+  document.querySelectorAll('[data-close]').forEach(button => button.addEventListener('click', () => {
+    const previous = selectedCategory;
+    selectCategory(previous, false);
+    categoryButtons.find(button => button.dataset.category === previous)?.focus({preventScroll:true});
+  }));
   const slides = [...document.querySelectorAll('.project-slide')];
   const dots = [...document.querySelectorAll('[data-slide]')];
   const carousel = document.querySelector('.carousel');
