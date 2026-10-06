@@ -162,3 +162,5 @@ john-bryce.png - https://www.johnbryce.co.il/wp-content/uploads/2025/09/logo_gho
 basmach.png - https://commons.wikimedia.org/wiki/File:Basmah.png
 brain-sciences.png - https://ssl.earli.org/sites/default/files/2020-07/Conference%202020%20%E2%80%93%20sympo_0.pdf
 mamtam.png - User-provided Mamtam insignia
+
+cyber-defender-reconstructed.png - AI-assisted reconstruction of the shield in the user-provided IDEFENSE 2014 poster. Central person silhouette and poster text removed; hidden artwork inferred. Reconstructed image, not an original official vector asset.
