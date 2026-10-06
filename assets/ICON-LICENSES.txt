@@ -126,3 +126,20 @@ higgsfield.svg : https://higgsfield.ai/
 
 Vendor and employer marks identify experience and skills. Trademarks belong to their respective owners. Some marks are cropped to their glyph or trimmed to remove whitespace; path geometry is unchanged.
 IsraeliNavy.png: IDF Spokesperson/Wikimedia Israel, CC BY-SA 3.0; https://commons.wikimedia.org/wiki/File:IsraeliNavy.png ; https://creativecommons.org/licenses/by-sa/3.0/
+
+
+INVESTIGATION TOOL ASSETS
+wireshark.svg : https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/wireshark.svg
+kali.svg : https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/kalilinux.svg
+snort.svg : https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/snort.svg
+volatility.png : https://volatilityfoundation.org/wp-content/uploads/2023/11/new-volatility-logo.png
+autopsy.svg : https://www.autopsy.com/wp-content/uploads/2019/08/autopsy-logo.svg
+suricata.png : https://suricata.io/wp-content/uploads/2021/01/cropped-favicon-192x192.png
+ida.png : https://hex-rays.com/hubfs/Ico-logo.png
+ftk.png : https://cdn.prod.website-files.com/697952141e2c1fbd9894f63d/697952141e2c1fbd9894f663_favicon.png
+procmon.png : https://download.sysinternals.com/files/ProcessMonitor.zip (original application icon)
+procexp.png : https://download.sysinternals.com/files/ProcessExplorer.zip (original application icon)
+autoruns.png : https://download.sysinternals.com/files/Autoruns.zip (original application icon)
+ollydbg.png : https://www.ollydbg.de/odbg200.zip (original application icon)
+Wireshark, Kali Linux and Snort SVG geometry: Simple Icons (CC0 1.0, license above); vendor colors applied.
+IDA is identified with its publisher Hex-Rays mark; FTK Imager is identified with its publisher Exterro mark. Windows Event Viewer uses the Microsoft Windows mark. strings uses a neutral terminal UI icon. Microsoft Sysinternals and OllyDbg icons were extracted from original vendor binaries for software identification; no executable software is redistributed in this repository. Brand and product marks belong to their respective owners.

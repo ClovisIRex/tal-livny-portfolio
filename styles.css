@@ -45,3 +45,14 @@
 .language-grid small{margin-top:3px;font-size:11px;color:var(--muted)}
 @media(max-width:1050px){.category-button{font-size:10px}}
 @media(max-width:760px){.category-button{font-size:12px}.category-panel .timeline-top{align-items:flex-start;flex-direction:column;gap:11px}.company-logo{width:49px;height:49px;padding:5px}.employer-heading{gap:12px}.category-panel .timeline-top>.date{margin-left:61px}.experience-summary{align-items:flex-start;flex-direction:column;gap:3px;padding:12px}.experience-summary strong{font-size:12px}.tech-logo-well.wordmark-logo{width:53px}.language-grid{grid-template-columns:1fr}.language-grid li{padding:13px 16px}}
+
+/* Confirmed military tooling and AI tenure. */
+.toolkit-context{display:flex;align-items:center;flex-wrap:wrap;gap:12px;margin:5px 0 20px}
+.profile-tag{display:inline-block;font-size:10px;font-weight:600;letter-spacing:.025em;border-radius:6px;padding:7px 10px;color:var(--mint);background:#16313c;border:1px solid #2e5260}
+.toolkit-context p{margin:0;font-size:11px;color:var(--muted);line-height:1.6}
+.ai-tenure{display:flex;align-items:center;flex-wrap:wrap;gap:10px 15px;font-size:11px;color:var(--muted);margin:0 0 22px;padding:0 0 19px;border-bottom:1px solid var(--line)}
+.ai-tenure .icon{width:19px;height:19px;color:var(--mint)}
+.ai-tenure strong{font-size:12px;font-weight:500;color:#bdd8e3}
+@media(max-width:760px){.toolkit-context{gap:9px}.ai-tenure{gap:8px 10px}.ai-tenure span{width:100%;padding-left:29px}}
+
+.military-toolkit + .tech-group{margin-top:34px;padding-top:27px;border-top:1px solid var(--line)}
