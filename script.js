@@ -1,41 +1,9 @@
 'use strict';
 (() => {
   const root = document.documentElement;
-  const content = window.PORTFOLIO_CONTENT;
-  const languageButton = document.getElementById('language-toggle');
   const menuButton = document.getElementById('menu-toggle');
   const nav = document.getElementById('main-nav');
   const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
-  let language = 'he';
-  const labels = {
-    he: {menu:'פתיחת תפריט',nav:'ניווט ראשי',carousel:'פרויקטים נבחרים',previous:'הפרויקט הקודם',next:'הפרויקט הבא',title:'טל ליבני | Full-stack & SecOps',description:'טל ליבני | פיתוח Full-stack, אוטומציה ו-SecOps. ניסיון מקצועי, פרויקטים ופרטי קשר.'},
-    en: {menu:'Toggle navigation',nav:'Main navigation',carousel:'Selected projects',previous:'Previous project',next:'Next project',title:'Tal Livny | Full-stack & SecOps',description:'Tal Livny | Full-stack development, automation and SecOps. Explore my experience, projects and contact details.'}
-  };
-  function setLanguage(next) {
-    language = next === 'en' ? 'en' : 'he';
-    root.lang = language;
-    root.dir = language === 'he' ? 'rtl' : 'ltr';
-    document.querySelectorAll('[data-i18n]').forEach(el => {
-      const value = content[language][el.dataset.i18n];
-      // All content is authored locally, never interpolated from visitor input.
-      if (value !== undefined) el.innerHTML = value;
-    });
-    document.querySelectorAll('[data-i18n-alt]').forEach(el => el.alt = content[language][el.dataset.i18nAlt]);
-    languageButton.textContent = language === 'he' ? 'EN' : 'עב';
-    languageButton.setAttribute('aria-label', language === 'he' ? 'Switch to English' : 'מעבר לעברית');
-    menuButton.setAttribute('aria-label', labels[language].menu);
-    nav.setAttribute('aria-label', labels[language].nav);
-    document.querySelector('.carousel').setAttribute('aria-label', labels[language].carousel);
-    document.getElementById('previous-project').setAttribute('aria-label', labels[language].previous);
-    document.getElementById('next-project').setAttribute('aria-label', labels[language].next);
-    document.title = labels[language].title;
-    document.querySelector('meta[name="description"]').content = labels[language].description;
-    try { localStorage.setItem('tal-portfolio-language', language); } catch (_) { /* Private browsing still works. */ }
-  }
-  let initial = new URLSearchParams(location.search).get('lang');
-  if (!initial) { try { initial = localStorage.getItem('tal-portfolio-language'); } catch (_) {} }
-  setLanguage(initial || 'he');
-  languageButton.addEventListener('click', () => setLanguage(language === 'he' ? 'en' : 'he'));
   function closeMenu() { nav.classList.remove('is-open'); menuButton.setAttribute('aria-expanded', 'false'); }
   menuButton.addEventListener('click', () => {
     const open = menuButton.getAttribute('aria-expanded') !== 'true';
