@@ -33,7 +33,7 @@
 .experience-summary strong{color:var(--mint);font-size:13px;font-weight:600}
 .employer-heading{display:flex;align-items:center;gap:15px;min-width:0}
 .company-logo{display:grid;place-items:center;flex-shrink:0;width:56px;height:56px;padding:6px;border-radius:11px;background:#f7f9fc;border:1px solid #d9e4ed}
-.company-logo img{display:block;width:100%;height:100%;object-fit:contain}
+.company-logo img{display:block;width:100%;height:42px;object-fit:contain;min-height:0}
 .category-panel .timeline-top{align-items:center}
 .category-panel .timeline-top h3{margin:0}
 .language-group{margin-top:30px;padding-top:27px;border-top:1px solid var(--line)}
@@ -77,3 +77,5 @@
 .project-identity strong{display:block;font-size:18px;font-weight:600}
 .project-identity small{display:block;font-size:11px;margin-top:3px;color:var(--muted)}
 @media(max-width:760px){.education-top{min-height:58px}.program-logo{width:55px;height:51px}.program-logo .program-image,.program-logo .tech-logo{height:37px}.program-logo:has(img[src*="computer-science"]){width:91px}.education-institution p{font-size:12px}.category-panel .education-list h3{font-size:18px;line-height:1.4}}
+
+@media(max-width:760px){.company-logo img{height:37px}}
