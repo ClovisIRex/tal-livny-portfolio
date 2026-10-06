@@ -87,6 +87,21 @@
   indexEntry(projectIdentity, projectIdentity.querySelector('strong').textContent.trim(), 'Projects', document.getElementById('panel-project').textContent);
   let searchMatches = [];
   let activeSuggestion = -1;
+  function fitSuggestions() {
+    if (searchDropdown.hidden) return;
+    const parent = searchShell.getBoundingClientRect();
+    const field = searchInput.parentElement.getBoundingClientRect();
+    const visual = window.visualViewport;
+    const viewTop = visual?.offsetTop || 0;
+    const viewBottom = viewTop + (visual?.height || window.innerHeight);
+    const headerBottom = document.querySelector('.site-header').getBoundingClientRect().bottom;
+    const below = viewBottom - field.bottom - 24;
+    const above = field.top - Math.max(headerBottom, viewTop) - 24;
+    const useAbove = below < 200 && above > below;
+    searchDropdown.style.top = useAbove ? 'auto' : `${field.bottom - parent.top + 8}px`;
+    searchDropdown.style.bottom = useAbove ? `${parent.bottom - field.top + 8}px` : 'auto';
+    searchList.style.maxHeight = `${Math.max(60, Math.min(346, (useAbove ? above : below) - 40))}px`;
+  }
   function hideSuggestions() {
     searchDropdown.hidden = true;
     searchInput.setAttribute('aria-expanded', 'false');
@@ -152,6 +167,7 @@
     searchEmpty.hidden = searchMatches.length > 0;
     searchDropdown.hidden = false;
     searchInput.setAttribute('aria-expanded','true');
+    fitSuggestions();
     searchAnnouncement.textContent = searchMatches.length ? `${ranked.length} matching results. Use the arrow keys and Enter to explore.` : 'No matching keywords.';
   }
   function chooseSuggestion(index) {
@@ -189,6 +205,10 @@
     searchInput.focus();
   });
   document.addEventListener('click',event => { if (!searchShell.contains(event.target)) hideSuggestions(); });
+  window.addEventListener('resize',fitSuggestions,{passive:true});
+  window.addEventListener('scroll',fitSuggestions,{passive:true});
+  window.visualViewport?.addEventListener('resize',fitSuggestions,{passive:true});
+  window.visualViewport?.addEventListener('scroll',fitSuggestions,{passive:true});
   const slides = [...document.querySelectorAll('.project-slide')];
   const dots = [...document.querySelectorAll('[data-slide]')];
   const carousel = document.querySelector('.carousel');
