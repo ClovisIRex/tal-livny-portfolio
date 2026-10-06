@@ -160,3 +160,5 @@ html.reduce-motion .reveal{opacity:1!important;transform:none!important}
 @media(max-width:400px){.category-grid{grid-template-columns:1fr}.category-button{min-height:64px}.category-label{overflow-wrap:normal}}
 
 .panel-heading h2,.accessibility-dialog-heading h2{min-width:0;overflow-wrap:anywhere}.panel-heading .close-panel,.accessibility-dialog-heading .close-panel{flex-shrink:0}.panel-heading h2:focus-visible{outline:3px solid var(--mint);outline-offset:5px}
+
+.category-panel :where(h3,h4,p),.statement-content :where(h1,h2,p,li){overflow-wrap:anywhere;min-width:0}html.text-enlarged{--header:112px}html.text-enlarged .site-header{height:auto;min-height:var(--header)}html.text-enlarged .nav-shell{min-height:var(--header);padding-block:12px}
