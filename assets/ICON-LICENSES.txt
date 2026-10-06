@@ -143,3 +143,22 @@ autoruns.png : https://download.sysinternals.com/files/Autoruns.zip (original ap
 ollydbg.png : https://www.ollydbg.de/odbg200.zip (original application icon)
 Wireshark, Kali Linux and Snort SVG geometry: Simple Icons (CC0 1.0, license above); vendor colors applied.
 IDA is identified with its publisher Hex-Rays mark; FTK Imager is identified with its publisher Exterro mark. Windows Event Viewer uses the Microsoft Windows mark. strings uses a neutral terminal UI icon. Microsoft Sysinternals and OllyDbg icons were extracted from original vendor binaries for software identification; no executable software is redistributed in this repository. Brand and product marks belong to their respective owners.
+
+Education, editors and language logos (October 2026)
+Devicon editor marks: MIT; Cursor via Lobe Icons: MIT; flags via flag-icons: MIT.
+Institution and application logos are their owners' marks. Gonda brain mark extracted from its conference header; Basmach historical unit insignia from Wikimedia Commons.
+intellij.svg - https://raw.githubusercontent.com/devicons/devicon/master/icons/intellij/intellij-original.svg
+pycharm.svg - https://raw.githubusercontent.com/devicons/devicon/master/icons/pycharm/pycharm-original.svg
+webstorm.svg - https://raw.githubusercontent.com/devicons/devicon/master/icons/webstorm/webstorm-original.svg
+cursor.svg - https://raw.githubusercontent.com/lobehub/lobe-icons/master/packages/static-svg/icons/cursor.svg
+vim.svg - https://raw.githubusercontent.com/devicons/devicon/master/icons/vim/vim-original.svg
+language-he.svg - https://raw.githubusercontent.com/lipis/flag-icons/main/flags/4x3/il.svg
+language-en.svg - https://raw.githubusercontent.com/lipis/flag-icons/main/flags/4x3/gb.svg
+language-fr.svg - https://raw.githubusercontent.com/lipis/flag-icons/main/flags/4x3/fr.svg
+bar-ilan.svg - https://www.biu.ac.il/themes/custom/biu_base/assets/images/icons/logo-dark-en.svg
+tzav-logo.png - https://storage.googleapis.com/tzav-rishon-web-assets/app_logo_no_text.png
+computer-science.png - https://u.cs.biu.ac.il/~kaminkg/bisfai19/img/CSBIULogoFinalColorEng.png
+john-bryce.png - https://www.johnbryce.co.il/wp-content/uploads/2025/09/logo_ghon-bryce_black-1-2-e1758011757121.png
+basmach.png - https://commons.wikimedia.org/wiki/File:Basmah.png
+brain-sciences.png - https://ssl.earli.org/sites/default/files/2020-07/Conference%202020%20%E2%80%93%20sympo_0.pdf
+mamtam.png - User-provided Mamtam insignia
