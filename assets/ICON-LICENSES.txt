@@ -81,3 +81,48 @@ OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
+
+LOBE ICONS (ChatGPT/OpenAI, Claude, Gemini, ElevenLabs)
+MIT License
+
+Copyright (c) 2023 LobeHub
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+
+BRAND ASSET SOURCES
+checkpoint.svg : https://www.checkpoint.com/wp-content/themes/checkpoint-theme-v2/images/checkpoint-logo.svg
+sentinelone.svg : https://www.sentinelone.com/wp-content/themes/sentinelone/carbine/assets/svg/s1-logo-color.svg
+crowdstrike.svg : https://assets.crowdstrike.com/is/content/crowdstrikeinc/CS_Logo_Falcon
+forescout.svg : https://www.forescout.com/
+portnox.svg : https://www.portnox.com/wp-content/uploads/2025/09/portnox-logo-light-r.svg
+heygen.png : https://www.heygen.com/images/heygen-logo.png
+danel.png : https://edanel.co.il/wp-content/uploads/2021/03/logo.png
+cellcom.png : https://investors.cellcom.co.il/wp-content/uploads/2023/08/106-41890_CELLCOME_logo_ENG-Copy.png
+totango.svg : https://cdn.prod.website-files.com/674eeb9a1f72bb9513507dfd/6787f2c17232162de1014265_Favicon-dark-theme%2032x32.svg
+navy.png : https://upload.wikimedia.org/wikipedia/commons/f/f7/IsraeliNavy.png
+chatgpt.svg : https://raw.githubusercontent.com/lobehub/lobe-icons/master/packages/static-svg/icons/openai.svg
+claude.svg : https://raw.githubusercontent.com/lobehub/lobe-icons/master/packages/static-svg/icons/claude-color.svg
+gemini.svg : https://raw.githubusercontent.com/lobehub/lobe-icons/master/packages/static-svg/icons/gemini-color.svg
+elevenlabs.svg : https://raw.githubusercontent.com/lobehub/lobe-icons/master/packages/static-svg/icons/elevenlabs.svg
+vmware.svg : https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/vmware.svg
+higgsfield.svg : https://higgsfield.ai/
+
+Vendor and employer marks identify experience and skills. Trademarks belong to their respective owners. Some marks are cropped to their glyph or trimmed to remove whitespace; path geometry is unchanged.
+IsraeliNavy.png: IDF Spokesperson/Wikimedia Israel, CC BY-SA 3.0; https://commons.wikimedia.org/wiki/File:IsraeliNavy.png ; https://creativecommons.org/licenses/by-sa/3.0/
