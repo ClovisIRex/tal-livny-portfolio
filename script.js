@@ -19,8 +19,9 @@
   const categoryButtons = [...document.querySelectorAll('[data-category]')];
   const panels = [...document.querySelectorAll('.category-panel')];
   let selectedCategory = null;
-  function selectCategory(key, focusHeading = true) {
-    selectedCategory = key === selectedCategory ? null : key;
+  function selectCategory(key, focusHeading = true, forceOpen = false) {
+    document.querySelectorAll('.search-match').forEach(el => el.classList.remove('search-match'));
+    selectedCategory = forceOpen ? key : key === selectedCategory ? null : key;
     categoryButtons.forEach(button => button.setAttribute('aria-expanded', String(button.dataset.category === selectedCategory)));
     panels.forEach(panel => { panel.hidden = panel.id !== `panel-${selectedCategory}`; });
     if (selectedCategory && focusHeading) {
@@ -36,6 +37,158 @@
     selectCategory(previous, false);
     categoryButtons.find(button => button.dataset.category === previous)?.focus({preventScroll:true});
   }));
+  // Build suggestions from the same content shown in the category panels.
+  const searchInput = document.getElementById('expertise-query');
+  const searchShell = document.querySelector('.expertise-search');
+  const searchDropdown = document.getElementById('search-suggestions');
+  const searchList = document.getElementById('expertise-results');
+  const searchEmpty = document.getElementById('search-empty');
+  const searchClear = document.getElementById('search-clear');
+  const searchAnnouncement = document.getElementById('search-announcement');
+  const normalize = value => value.normalize('NFKD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9+#]+/g, ' ').trim();
+  const aliases = {
+    'check point firewall': 'checkpoint firewall',
+    'active directory': 'ad windows domain identity administration',
+    'aws': 'amazon web services',
+    'azure': 'microsoft azure cloud',
+    'google cloud': 'gcp google cloud platform',
+    'process monitor procmon': 'sysinternals procmon',
+    'process explorer': 'sysinternals procexp',
+    'windows event viewer': 'event logs logging',
+    'vmware': 'virtual machines virtualization',
+    'soc siem': 'security operations center security information event management',
+    'sentinelone edr': 'endpoint detection response sentinel one',
+    'crowdstrike falcon': 'edr endpoint detection response',
+    'ida': 'ida pro disassembler reverse engineering',
+    'node js': 'node nodejs',
+    'react': 'reactjs react js',
+    'vs code': 'visual studio code vscode',
+    'azure devops': 'microsoft azure devops cicd ci cd',
+    'gitlab': 'git lab cicd ci cd',
+    'github actions': 'github pipelines cicd ci cd',
+    'neuroscience': 'brain sciences machine learning',
+    'c#': 'csharp c sharp',
+    'c++': 'cpp c plus plus'
+  };
+  const searchEntries = [];
+  function indexEntry(target, label, context, extra = '') {
+    const panel = target.closest('.category-panel');
+    const key = panel.id.replace('panel-', '');
+    const alias = aliases[normalize(label)] || '';
+    const logo = target.querySelector('.tech-logo-well, .company-logo, .program-logo, .language-logo, .project-app-logo');
+    searchEntries.push({target, label, context, key, logo, words: normalize(`${label} ${context} ${extra} ${alias}`)});
+  }
+  document.querySelectorAll('.tech-item').forEach(el => indexEntry(el, el.lastElementChild.textContent.trim(), el.closest('.tech-group').querySelector('h3').textContent.trim()));
+  document.querySelectorAll('.capability-list span').forEach(el => indexEntry(el, el.textContent.trim(), 'Security & systems'));
+  document.querySelectorAll('.education-card').forEach(el => indexEntry(el, el.querySelector('h3').textContent.trim(), `Education · ${el.querySelector('.education-institution p').textContent.trim()}`, el.textContent));
+  document.querySelectorAll('.timeline-item').forEach(el => indexEntry(el, el.querySelector('h3').textContent.trim(), `Experience · ${el.querySelector('.role').textContent.trim()}`, el.textContent));
+  document.querySelectorAll('.language-grid li').forEach(el => indexEntry(el, el.querySelector('strong').textContent.trim(), `Languages · ${el.querySelector('small').textContent.trim()}`));
+  const projectIdentity = document.querySelector('.project-identity');
+  indexEntry(projectIdentity, projectIdentity.querySelector('strong').textContent.trim(), 'Projects', document.getElementById('panel-project').textContent);
+  let searchMatches = [];
+  let activeSuggestion = -1;
+  function hideSuggestions() {
+    searchDropdown.hidden = true;
+    searchInput.setAttribute('aria-expanded', 'false');
+    searchInput.removeAttribute('aria-activedescendant');
+    activeSuggestion = -1;
+  }
+  function activateSuggestion(index) {
+    activeSuggestion = index;
+    [...searchList.children].forEach((option, i) => option.setAttribute('aria-selected', String(i === index)));
+    if (index >= 0) {
+      const option = searchList.children[index];
+      searchInput.setAttribute('aria-activedescendant', option.id);
+      option.scrollIntoView({block:'nearest'});
+    } else searchInput.removeAttribute('aria-activedescendant');
+  }
+  function renderSuggestions() {
+    const query = normalize(searchInput.value);
+    searchClear.hidden = !searchInput.value;
+    searchList.replaceChildren();
+    activeSuggestion = -1;
+    searchInput.removeAttribute('aria-activedescendant');
+    if (!query) { hideSuggestions(); searchAnnouncement.textContent = ''; return; }
+    const tokens = query.split(' ');
+    const ranked = searchEntries.filter(entry => tokens.every(token => entry.words.includes(token))).map(entry => {
+      const label = normalize(entry.label);
+      return {entry, rank:label === query ? 0 : label.startsWith(query) ? 1 : label.includes(query) ? 2 : 3};
+    }).sort((a,b) => a.rank - b.rank || a.entry.label.localeCompare(b.entry.label));
+    searchMatches = ranked.slice(0, 8).map(result => result.entry);
+    searchMatches.forEach((entry, index) => {
+      const option = document.createElement('li');
+      option.id = `expertise-option-${index}`;
+      option.className = 'search-option';
+      option.setAttribute('role','option');
+      option.setAttribute('aria-selected','false');
+      option.dataset.index = index;
+      if (entry.logo) {
+        const logo = entry.logo.cloneNode(true);
+        logo.className = 'search-result-logo';
+        logo.setAttribute('aria-hidden','true');
+        logo.querySelectorAll('img').forEach(img => { img.alt = ''; img.loading = 'eager'; });
+        option.append(logo);
+      } else {
+        const marker = document.createElement('span');
+        marker.className = 'search-result-marker';
+        marker.setAttribute('aria-hidden','true');
+        marker.textContent = entry.key === 'security' ? 'S' : entry.key === 'education' ? 'E' : 'D';
+        option.append(marker);
+      }
+      const copy = document.createElement('span');
+      copy.className = 'search-result-copy';
+      const title = document.createElement('strong');
+      title.textContent = entry.label;
+      const detail = document.createElement('small');
+      detail.textContent = entry.context;
+      copy.append(title,detail);
+      const arrow = document.createElement('span');
+      arrow.className = 'search-result-arrow';
+      arrow.setAttribute('aria-hidden','true');
+      arrow.textContent = '↗';
+      option.append(copy,arrow);
+      searchList.append(option);
+    });
+    searchEmpty.hidden = searchMatches.length > 0;
+    searchDropdown.hidden = false;
+    searchInput.setAttribute('aria-expanded','true');
+    searchAnnouncement.textContent = searchMatches.length ? `${ranked.length} matching results. Use the arrow keys and Enter to explore.` : 'No matching keywords.';
+  }
+  function chooseSuggestion(index) {
+    const entry = searchMatches[index];
+    if (!entry) return;
+    selectCategory(entry.key, false, true);
+    hideSuggestions();
+    entry.target.classList.add('search-match');
+    if (!entry.target.hasAttribute('tabindex')) entry.target.setAttribute('tabindex','-1');
+    entry.target.focus({preventScroll:true});
+    entry.target.scrollIntoView({behavior:motion.matches ? 'instant' : 'smooth', block:'center'});
+    searchAnnouncement.textContent = `Showing ${entry.label} in ${document.getElementById(`heading-${entry.key}`).textContent}.`;
+  }
+  searchInput.addEventListener('input',renderSuggestions);
+  searchInput.addEventListener('focus',renderSuggestions);
+  searchInput.addEventListener('keydown',event => {
+    if (event.key === 'Escape') { hideSuggestions(); return; }
+    if (event.key === 'Tab') { hideSuggestions(); return; }
+    if (!['ArrowDown','ArrowUp','Enter'].includes(event.key)) return;
+    if (searchDropdown.hidden && searchInput.value.trim()) renderSuggestions();
+    if (!searchMatches.length || searchDropdown.hidden) return;
+    event.preventDefault();
+    if (event.key === 'Enter') chooseSuggestion(activeSuggestion < 0 ? 0 : activeSuggestion);
+    else activateSuggestion(event.key === 'ArrowDown' ? (activeSuggestion+1)%searchMatches.length : (activeSuggestion < 0 ? searchMatches.length-1 : (activeSuggestion-1+searchMatches.length)%searchMatches.length));
+  });
+  searchList.addEventListener('pointerdown',event => event.preventDefault());
+  searchList.addEventListener('click',event => {
+    const option = event.target.closest('[role="option"]');
+    if (option) chooseSuggestion(Number(option.dataset.index));
+  });
+  searchClear.addEventListener('click',() => {
+    searchInput.value = '';
+    document.querySelectorAll('.search-match').forEach(el => el.classList.remove('search-match'));
+    renderSuggestions();
+    searchInput.focus();
+  });
+  document.addEventListener('click',event => { if (!searchShell.contains(event.target)) hideSuggestions(); });
   const slides = [...document.querySelectorAll('.project-slide')];
   const dots = [...document.querySelectorAll('[data-slide]')];
   const carousel = document.querySelector('.carousel');
@@ -93,4 +246,3 @@
   updateProgress();
   document.getElementById('year').textContent = new Date().getFullYear();
 })();
-
