@@ -5,10 +5,19 @@
   const nav = document.getElementById('main-nav');
   const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
   const reduceMotion = () => motion.matches || root.classList.contains('reduce-motion');
-  function closeMenu() { nav.classList.remove('is-open'); menuButton.setAttribute('aria-expanded', 'false'); }
+  const header = document.querySelector('.site-header');
+  if ('ResizeObserver' in window) {
+    new ResizeObserver(() => root.style.setProperty('--header', `${Math.ceil(header.getBoundingClientRect().height)}px`)).observe(header);
+  }
+  function closeMenu() {
+    nav.classList.remove('is-open');
+    menuButton.setAttribute('aria-expanded', 'false');
+    menuButton.setAttribute('aria-label', 'Open navigation');
+  }
   menuButton.addEventListener('click', () => {
     const open = menuButton.getAttribute('aria-expanded') !== 'true';
     menuButton.setAttribute('aria-expanded', String(open));
+    menuButton.setAttribute('aria-label', open ? 'Close navigation' : 'Open navigation');
     nav.classList.toggle('is-open', open);
   });
   nav.querySelectorAll('a').forEach(link => link.addEventListener('click', closeMenu));
@@ -16,29 +25,52 @@
     if (event.key === 'Escape' && menuButton.getAttribute('aria-expanded') === 'true') { closeMenu(); menuButton.focus(); }
   });
   document.addEventListener('click', event => { if (!event.target.closest('.site-header')) closeMenu(); });
-  window.matchMedia('(min-width: 761px)').addEventListener('change', closeMenu);
-  const categoryButtons = [...document.querySelectorAll('[data-category]')];
-  const panels = [...document.querySelectorAll('.category-panel')];
-  let selectedCategory = null;
-  function selectCategory(key, focusHeading = true, forceOpen = false) {
-    document.querySelectorAll('.search-match').forEach(el => el.classList.remove('search-match'));
-    selectedCategory = forceOpen ? key : key === selectedCategory ? null : key;
-    categoryButtons.forEach(button => button.setAttribute('aria-expanded', String(button.dataset.category === selectedCategory)));
-    panels.forEach(panel => { panel.hidden = panel.id !== `panel-${selectedCategory}`; });
-    if (selectedCategory && focusHeading) {
-      const heading = document.getElementById(`heading-${selectedCategory}`);
-      heading.focus({preventScroll:true});
-      document.getElementById('categories').scrollIntoView({behavior:reduceMotion() ? 'instant' : 'smooth',block:'start'});
-    }
-    updateProgress();
+  window.matchMedia('(min-width: 961px)').addEventListener('change', closeMenu);
+  function revealTarget(target) {
+    for (let details = target.closest('details'); details; details = details.parentElement?.closest('details')) details.open = true;
   }
-  categoryButtons.forEach(button => button.addEventListener('click', () => selectCategory(button.dataset.category)));
-  document.querySelectorAll('[data-close]').forEach(button => button.addEventListener('click', () => {
-    const previous = selectedCategory;
-    selectCategory(previous, false);
-    categoryButtons.find(button => button.dataset.category === previous)?.focus({preventScroll:true});
+  function selectCategory(key, focusHeading = true) {
+    document.querySelectorAll('.search-match').forEach(el => el.classList.remove('search-match'));
+    const panel = document.getElementById(`panel-${key}`);
+    if (!panel) return;
+    revealTarget(panel);
+    if (focusHeading) {
+      const heading = document.getElementById(`heading-${key}`);
+      heading.setAttribute('tabindex', '-1');
+      heading.focus({preventScroll: true});
+      panel.scrollIntoView({behavior: reduceMotion() ? 'instant' : 'smooth', block: 'start'});
+    }
+  }
+  // Native anchors work without JavaScript. Enhancement opens tool details and moves focus.
+  function navigateToHash(hash, updateHash = false) {
+    let id;
+    try { id = decodeURIComponent(hash.slice(1)); } catch { return; }
+    const target = document.getElementById(id);
+    if (!target) return;
+    revealTarget(target);
+    closeMenu();
+    if (updateHash && location.hash !== hash) {
+      try { history.pushState(null, '', hash); }
+      catch { location.hash = hash; }
+    }
+    const focusTarget = target.matches('main, h1, h2, h3, h4, article') ? target : target.querySelector('h1, h2, h3') || target;
+    if (!focusTarget.hasAttribute('tabindex')) focusTarget.setAttribute('tabindex', '-1');
+    focusTarget.focus({preventScroll: true});
+    target.scrollIntoView({behavior: reduceMotion() ? 'instant' : 'smooth', block: 'start'});
+    nav.querySelectorAll('a').forEach(link => {
+      if (link.hash === hash) link.setAttribute('aria-current', 'location');
+      else link.removeAttribute('aria-current');
+    });
+  }
+  document.querySelectorAll('a[href^="#"]').forEach(link => link.addEventListener('click', event => {
+    if (event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
+    if (!document.getElementById(link.hash.slice(1))) return;
+    event.preventDefault();
+    navigateToHash(link.hash, true);
   }));
-  // Build suggestions from the same content shown in the category panels.
+  window.addEventListener('hashchange', () => navigateToHash(location.hash));
+  window.addEventListener('popstate', () => navigateToHash(location.hash || '#top'));
+  // Build suggestions from the visible experience and the complete tool lists.
   const searchInput = document.getElementById('expertise-query');
   const searchShell = document.querySelector('.expertise-search');
   const searchDropdown = document.getElementById('search-suggestions');
@@ -53,8 +85,7 @@
     'aws': 'amazon web services',
     'azure': 'microsoft azure cloud',
     'google cloud': 'gcp google cloud platform',
-    'process monitor procmon': 'sysinternals procmon',
-    'process explorer': 'sysinternals procexp',
+    'sysinternals suite': 'microsoft windows process monitor procmon process explorer procexp autoruns',
     'windows event viewer': 'event logs logging',
     'vmware': 'virtual machines virtualization',
     'soc siem': 'security operations center security information event management',
@@ -74,12 +105,13 @@
   const searchEntries = [];
   function indexEntry(target, label, context, extra = '') {
     const panel = target.closest('.category-panel');
+    if (!panel) return;
     const key = panel.id.replace('panel-', '');
     const alias = aliases[normalize(label)] || '';
     const logo = target.querySelector('.tech-logo-well, .company-logo, .program-logo, .language-logo, .project-app-logo');
     searchEntries.push({target, label, context, key, logo, words: normalize(`${label} ${context} ${extra} ${alias}`)});
   }
-  document.querySelectorAll('.tech-item').forEach(el => indexEntry(el, el.lastElementChild.textContent.trim(), el.closest('.tech-group').querySelector('h3').textContent.trim()));
+  document.querySelectorAll('.tech-item').forEach(el => indexEntry(el, el.dataset.searchLabel || el.lastElementChild.textContent.trim(), el.closest('.tech-group').querySelector('h3').textContent.trim(), el.textContent));
   document.querySelectorAll('.capability-list span').forEach(el => indexEntry(el, el.textContent.trim(), 'Security & systems'));
   document.querySelectorAll('.education-card').forEach(el => indexEntry(el, el.querySelector('h3').textContent.trim(), `Education · ${el.querySelector('.education-institution p').textContent.trim()}`, el.textContent));
   document.querySelectorAll('.timeline-item').forEach(el => indexEntry(el, el.querySelector('h3,h4').textContent.trim(), `Experience · ${el.querySelector('.role').textContent.trim()}`, el.textContent));
@@ -144,7 +176,8 @@
       option.setAttribute('aria-selected','false');
       option.dataset.index = index;
       if (entry.logo) {
-        const logo = entry.logo.cloneNode(true);
+        const logo = document.createElement('span');
+        logo.innerHTML = entry.logo.innerHTML;
         logo.className = 'search-result-logo';
         logo.setAttribute('aria-hidden','true');
         logo.querySelectorAll('img').forEach(img => { img.alt = ''; img.loading = 'eager'; });
@@ -218,7 +251,7 @@
   const slides = [...document.querySelectorAll('.project-slide')];
   const dots = [...document.querySelectorAll('[data-slide]')];
   const carousel = document.querySelector('.carousel');
-  let active = 0;
+  let active = 1;
   function showSlide(index) {
     active = (index + slides.length) % slides.length;
     slides.forEach((slide, i) => {
@@ -252,25 +285,8 @@
     touchStart = null;
   }, {passive:true});
   viewport.addEventListener('pointercancel', () => { touchStart = null; }, {passive:true});
-  if ('IntersectionObserver' in window && !reduceMotion()) {
-    const observer = new IntersectionObserver(entries => entries.forEach(entry => {
-      if (entry.isIntersecting) { entry.target.classList.add('is-visible'); observer.unobserve(entry.target); }
-    }), {threshold:0.08});
-    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
-    root.classList.add('js-motion');
-  }
-  const progress = document.querySelector('.scroll-progress');
-  let ticking = false;
-  function updateProgress() {
-    const available = root.scrollHeight - root.clientHeight;
-    progress.style.width = `${available > 0 ? Math.min(100, Math.max(0, window.scrollY / available * 100)) : 0}%`;
-    ticking = false;
-  }
-  window.addEventListener('scroll', () => {
-    if (!ticking) { requestAnimationFrame(updateProgress); ticking = true; }
-  }, {passive:true});
-  window.addEventListener('resize', updateProgress, {passive:true});
-  window.addEventListener('accessibilitychange',() => { updateProgress(); fitSuggestions(); });
-  updateProgress();
+  window.addEventListener('accessibilitychange', fitSuggestions);
+  showSlide(active);
+  if (location.hash) navigateToHash(location.hash);
   document.getElementById('year').textContent = new Date().getFullYear();
 })();
